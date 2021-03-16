@@ -47,7 +47,7 @@ print("Data Loaded Successfully!\n")
 class Mnist_Logistch(nn.Module):
     def __init__(self):
         super().__init__()
-        self.weights = nn.Parameter(torch.randn(784, 10)) / math.sqrt(784)
+        self.weights = nn.Parameter(torch.randn(784, 10)/ math.sqrt(784) ) 
         # Above is Xavier Initialization
         self.bias = nn.Parameter(torch.zeros(10))
     
@@ -56,7 +56,7 @@ class Mnist_Logistch(nn.Module):
 
 model = Mnist_Logistch()
 # Hyperpara and Settings Here
-lr = 0.2
+lr = 0.4
 bs = 64
 epochs = 10
 opt = torch.optim.SGD(model.parameters(), lr=lr)
@@ -66,6 +66,8 @@ print(f"HyperParameters set as: lr= {0.5}, bs= {64}, epochs= {epochs}, opt= {opt
 def accracy(y, yb):
     preds = torch.argmax(y, dim=1)
     return (preds == yb).float().mean()
+
+print(f"Accuracy without training: {accracy(model(x_valid), y_valid)}" )
 
 loss_func = F.cross_entropy
 # If you want to use fit function, define DS and DL firstly
@@ -94,10 +96,6 @@ def fit(epochs, model, loss_func, train_dl, opt, valid_dl):
         i_sum = 0
         for xb, yb in train_dl:
             ls, i = loss_batch(model, loss_func, xb, yb, opt= opt)
-            ls_sum += ls * i
-            i_sum += i
-        
-        print(f"In Training Set, Epoch: {epoch}, Losses in Training: {ls_sum/i_sum}")
 
         model.eval()
         with torch.no_grad():
@@ -106,12 +104,12 @@ def fit(epochs, model, loss_func, train_dl, opt, valid_dl):
             )
         val_loss = np.sum(np.multiply(losses, nums)) / np.sum(nums)
 
-        print(f"Epoch: {epoch}, Losses in validation: {val_loss}")
+        print(f"Epoch: {epoch+1}, Losses in validation: {val_loss}")
 
 # Finally, let's run our logistic Model
 fit(epochs, model, loss_func, train_dl, opt, valid_dl)
 
-print(f"Model fitted!")
+print(f"Accuracy After Training: {accracy(model(x_valid), y_valid)} ")
 
 # for epoch in range(epochs):
 #     for xb, yb in train_dl:
